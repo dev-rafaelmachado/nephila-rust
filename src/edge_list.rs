@@ -22,6 +22,10 @@ impl Graph for EdgeList {
         // Do nothing
     }
     
+    fn remove_node(&mut self, value: i32) {
+        self.edges.retain(|(from, to, _)| *from != value && *to != value);
+    }
+
     fn add_edge(&mut self, from: i32, to: i32, weight: i32) {
         let mut weight = weight;
         match !self.is_weighted {
@@ -39,7 +43,18 @@ impl Graph for EdgeList {
         self.edges.push((from, to, weight));
     }
 
-    fn get_adjacent(&self, value: i32) -> Vec<i32> {
+    fn remove_edge(&mut self, from: i32, to: i32) {
+        let mut index = 0;
+        for (i, (f, t, _)) in self.edges.iter().enumerate() {
+            if *f == from && *t == to {
+                index = i;
+                break;
+            }
+        }
+        self.edges.remove(index);
+    }
+
+    fn get_neighbors(&self, value: i32) -> Vec<i32> {
         let mut adjacent = Vec::new();
         for (from, to, _) in &self.edges {
             if *from == value {
@@ -47,10 +62,6 @@ impl Graph for EdgeList {
             }
         }
         adjacent
-    }
-
-    fn get_node(&self, value: i32) -> i32 {
-        value
     }
 
     fn is_neighbor(&self, from: i32, to: i32) -> bool {
