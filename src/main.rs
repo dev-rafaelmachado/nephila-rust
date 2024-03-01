@@ -1,25 +1,34 @@
-mod graph;
-mod edge_list;
+mod structure_types;
+mod shared;
 
-use graph::Graph;
-use edge_list::EdgeList;
+// use crate::structure_types::edge_list::EdgeList;
+use crate::structure_types::adjacency_matrix::AdjacencyMatrix;
+use crate::shared::graph::TGraph;
 
 fn main() {
-    let mut graph = EdgeList::new(false, false);
+    let mut graph = AdjacencyMatrix::new(false, true);
 
-    graph.add_edge(1, 2, 10);
-    graph.add_edge(2, 3, 30);
+    graph.add_node("A");
+    graph.add_node("B");
+    graph.add_node("C");
+    graph.add_node("D");
 
-    if graph.is_neighbor(1, 2) {
-        println!("1 is neighbor of 2");
-    } else {
-        println!("1 is not neighbor of 2");
-    }
-    if graph.is_neighbor(1, 3) {
-        println!("1 is neighbor of 3");
-    } else {
-        println!("1 is not neighbor of 3");
-    }
+    graph.add_edge("A", "B", 1);
+    graph.add_edge("B", "C", 2);
+    graph.add_edge("C", "D", 3);
+    graph.add_edge("D", "A", 4);
+
+    graph.print();
+
+    let a_neighbors = graph.get_neighbors("A");
+    println!("{:?}", a_neighbors);
+
+    let b_and_c_is_neighbors = graph.is_neighbor("B", "C");
+    println!("{}", b_and_c_is_neighbors);
+
+    graph.remove_node("A");
+    graph.remove_edge("B", "C");
+
 
 
     graph.print();
