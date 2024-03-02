@@ -2,11 +2,11 @@ mod structure_types;
 mod shared;
 
 // use crate::structure_types::edge_list::EdgeList;
-use crate::structure_types::adjacency_matrix::AdjacencyMatrix;
+use crate::structure_types::adjacency_list::AdjacencyList;
 use crate::shared::graph::TGraph;
 
 fn main() {
-    let mut graph = AdjacencyMatrix::new(true, true);
+    let mut graph = AdjacencyList::new(true, true);
 
     graph.add_node("A");
     graph.add_node("B");

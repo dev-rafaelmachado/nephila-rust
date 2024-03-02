@@ -64,7 +64,7 @@ impl TGraph for AdjacencyMatrix {
         }
     }
 
-    fn is_neighbor(&self, from: &str, to: &str) -> bool {
+    fn is_neighbor(&mut self, from: &str, to: &str) -> bool {
         let from_index = self.nodes.iter().position(|n| n.get_value() == from).expect("Node not found");
         let to_index = self.nodes.iter().position(|n| n.get_value() == to).expect("Node not found");
         self.matrix[from_index][to_index] != 0

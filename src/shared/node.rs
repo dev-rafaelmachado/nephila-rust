@@ -1,7 +1,7 @@
 use crate::shared::graph::TNode;
 pub struct Node {
     value: String,
-    neighbors: Option<Vec<(Box<Node>, i32)>>,
+    neighbors: Option<Vec<(String, i32)>>,
 }
 
 impl TNode for Node {
@@ -12,7 +12,7 @@ impl TNode for Node {
         }
     }
 
-    fn new_with_neighbors(value: &str, neighbors: Vec<(Box<Node>, i32)>) -> Self {
+    fn new_with_neighbors(value: &str, neighbors: Vec<(String, i32)>) -> Self {
         Node {
             value: value.to_string(),
             neighbors: Some(neighbors),
@@ -27,13 +27,13 @@ impl TNode for Node {
         self.value = value.to_string();
     }
 
-    fn add_neighbor(&mut self, node: Box<Node>, weight: i32) {
+    fn add_neighbor(&mut self, node: &str, weight: i32) {
         match &mut self.neighbors {
             Some(neighbors) => {
-                neighbors.push((node, weight));
+                neighbors.push((node.to_string(), weight));
             }
             None => {
-                self.neighbors = Some(vec![(node, weight)]);
+                self.neighbors = Some(vec![(node.to_string(), weight)]);
             }
         }
     }
@@ -41,7 +41,7 @@ impl TNode for Node {
     fn remove_neighbor(&mut self, value: &str) {
         match &mut self.neighbors {
             Some(neighbors) => {
-                neighbors.retain(|(node, _)| node.get_value() != value);
+                neighbors.retain(|(node, _)| *node != value);
             }
             None => (),
         }
@@ -49,27 +49,24 @@ impl TNode for Node {
 
     fn is_neighbor(&mut self, to: &str) -> bool {
         self.neighbors.as_ref().map_or(false, |neighbors| {
-            neighbors.iter().any(|(node, _)| node.get_value() == to)
+            neighbors.iter().any(|(node, _)| *node == to)
         })
     }
 
-    fn get_neighbors(&self) -> Vec<(Box<Node>, i32)> {
+    fn get_neighbors(&self) -> Vec<(&str, i32)> {
         match &self.neighbors {
-            Some(neighbors) => neighbors.to_vec(),
+            Some(neighbors) => neighbors.iter().map(|(node, weight)| (node.as_str(), *weight)).collect(),
             None => Vec::new(),
         }
     }
 
     fn print(&self) {
-        println!("Node: {}", self.value);
-        match &self.neighbors {
-            Some(neighbors) => {
-                for (neighbor, _) in neighbors {
-                    println!("Neighbor: {}", neighbor.get_value());
-                }
-            }
-            None => (),
-        }
+        //X: [(Y, 1), (Z, 2)]
+        let neighbors = match &self.neighbors {
+            Some(neighbors) => neighbors.iter().map(|(node, weight)| format!("({},{})", node, weight)).collect::<Vec<String>>().join(", "),
+            None => String::from(""),
+        };
+        println!("{}: [{}]", self.value, neighbors);
     }
 }
 

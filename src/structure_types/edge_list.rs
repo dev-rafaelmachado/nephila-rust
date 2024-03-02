@@ -11,7 +11,6 @@ pub struct EdgeList {
     is_weighted: bool,
 }
 
-
 impl TGraph for EdgeList {
     fn new(is_directed: bool, is_weighted: bool) -> Self {
         EdgeList {
@@ -58,7 +57,7 @@ impl TGraph for EdgeList {
         });
     }
 
-    fn is_neighbor(&self, from: &str, to: &str) -> bool {
+    fn is_neighbor(&mut self, from: &str, to: &str) -> bool {
         self.edges.iter().any(|(f, t, _)| {
             f.get_value() == from && t.get_value() == to
         })

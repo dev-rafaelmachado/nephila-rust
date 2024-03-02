@@ -22,13 +22,12 @@ impl TGraph for AdjacencyList {
     }
 
     fn add_edge(&mut self, from: &str, to: &str, weight: i32) {
-        let from_node_index = self.nodes.iter().position(|node| node.get_value() == from).unwrap();
-        let to_node_index = self.nodes.iter().position(|node| node.get_value() == to).unwrap();
-
-        self.nodes[from_node_index].add_neighbor(self.nodes[to_node_index].clone(), weight);
-
+        let from_node = self.nodes.iter_mut().find(|node| node.get_value() == from).unwrap();
+        let weight = if self.is_weighted { weight } else { 1 };
+        from_node.add_neighbor(to, weight);
         if !self.is_directed {
-            self.nodes[to_node_index].add_neighbor(self.nodes[from_node_index].clone(), weight);
+            let to_node = self.nodes.iter_mut().find(|node| node.get_value() == to).unwrap();
+            to_node.add_neighbor(from, weight);
         }
     }
 
@@ -48,14 +47,14 @@ impl TGraph for AdjacencyList {
         }
     }
 
-    fn is_neighbor(&self, from: &str, to: &str) -> bool {
-        let from_node = self.nodes.iter().find(|node| node.get_value() == from).unwrap();
+    fn is_neighbor(&mut self, from: &str, to: &str) -> bool {
+        let from_node = self.nodes.iter_mut().find(|node| node.get_value() == from).unwrap();
         from_node.is_neighbor(to)
     }
 
     fn get_neighbors(&self, label: &str) -> Vec<(&str, i32)> {
         let node = self.nodes.iter().find(|node| node.get_value() == label).unwrap();
-        node.get_neighbors().iter().map(|(node, weight)| (node.get_value(), *weight)).collect()
+        node.get_neighbors()
     }
 
     fn print(&self) {
