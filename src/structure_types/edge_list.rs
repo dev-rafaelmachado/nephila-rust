@@ -64,14 +64,14 @@ impl TGraph for EdgeList {
         })
     }
 
-    fn get_neighbors(&self, label: &str) -> Vec<&str> {
-        let mut neighbors = Vec::new();
-        for (from, to, _) in &self.edges {
-            if from.get_value() == label {
-                neighbors.push(to.get_value());
+    fn get_neighbors(&self, label: &str) -> Vec<(&str, i32)> {
+        self.edges.iter().filter_map(|(f, t, w)| {
+            if f.get_value() == label {
+                Some((t.get_value(), *w))
+            } else {
+                None
             }
-        }
-        neighbors
+        }).collect()
     }
 
     fn print(&self) {

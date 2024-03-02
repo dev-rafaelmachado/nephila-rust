@@ -70,9 +70,15 @@ impl TGraph for AdjacencyMatrix {
         self.matrix[from_index][to_index] != 0
     }
 
-    fn get_neighbors(&self, label: &str) -> Vec<&str> {
+    fn get_neighbors(&self, label: &str) -> Vec<(&str, i32)> {
         let index = self.nodes.iter().position(|n| n.get_value() == label).expect("Node not found");
-        self.nodes.iter().enumerate().filter(|(i, _)| self.matrix[index][*i] != 0).map(|(_, n)| n.get_value()).collect()
+        self.nodes.iter().enumerate().filter_map(|(i, n)| {
+            if self.matrix[index][i] != 0 {
+                Some((n.get_value(), self.matrix[index][i]))
+            } else {
+                None
+            }
+        }).collect()
     }
 
     fn print(&self) {

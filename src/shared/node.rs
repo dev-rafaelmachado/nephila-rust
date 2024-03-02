@@ -1,7 +1,7 @@
 use crate::shared::graph::TNode;
 pub struct Node {
     value: String,
-    neighbors: Option<Vec<Box<Node>>>,
+    neighbors: Option<Vec<(Box<Node>, i32)>>,
 }
 
 impl TNode for Node {
@@ -12,7 +12,7 @@ impl TNode for Node {
         }
     }
 
-    fn new_with_neighbors(value: &str, neighbors: Vec<Box<Node>>) -> Self {
+    fn new_with_neighbors(value: &str, neighbors: Vec<(Box<Node>, i32)>) -> Self {
         Node {
             value: value.to_string(),
             neighbors: Some(neighbors),
@@ -27,13 +27,13 @@ impl TNode for Node {
         self.value = value.to_string();
     }
 
-    fn add_neighbor(&mut self, node: Box<Node>) {
+    fn add_neighbor(&mut self, node: Box<Node>, weight: i32) {
         match &mut self.neighbors {
             Some(neighbors) => {
-                neighbors.push(node);
+                neighbors.push((node, weight));
             }
             None => {
-                self.neighbors = Some(vec![node]);
+                self.neighbors = Some(vec![(node, weight)]);
             }
         }
     }
@@ -41,13 +41,19 @@ impl TNode for Node {
     fn remove_neighbor(&mut self, value: &str) {
         match &mut self.neighbors {
             Some(neighbors) => {
-                neighbors.retain(|node| node.get_value() != value);
+                neighbors.retain(|(node, _)| node.get_value() != value);
             }
             None => (),
         }
     }
 
-    fn get_neighbors(&self) -> Vec<Box<Node>> {
+    fn is_neighbor(&mut self, to: &str) -> bool {
+        self.neighbors.as_ref().map_or(false, |neighbors| {
+            neighbors.iter().any(|(node, _)| node.get_value() == to)
+        })
+    }
+
+    fn get_neighbors(&self) -> Vec<(Box<Node>, i32)> {
         match &self.neighbors {
             Some(neighbors) => neighbors.to_vec(),
             None => Vec::new(),
@@ -58,7 +64,7 @@ impl TNode for Node {
         println!("Node: {}", self.value);
         match &self.neighbors {
             Some(neighbors) => {
-                for neighbor in neighbors {
+                for (neighbor, _) in neighbors {
                     println!("Neighbor: {}", neighbor.get_value());
                 }
             }

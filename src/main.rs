@@ -6,7 +6,7 @@ use crate::structure_types::adjacency_matrix::AdjacencyMatrix;
 use crate::shared::graph::TGraph;
 
 fn main() {
-    let mut graph = AdjacencyMatrix::new(false, true);
+    let mut graph = AdjacencyMatrix::new(true, true);
 
     graph.add_node("A");
     graph.add_node("B");
